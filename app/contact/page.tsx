@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -9,11 +10,29 @@ export default function Contact() {
     subject: "",
     message: "",
   });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle the form submission
-    console.log("Form submitted:", formData);
+    setStatus('sending');
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error('Failed to send message');
+      
+      setStatus('success');
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setStatus('error');
+    }
   };
 
   const handleChange = (
@@ -23,10 +42,16 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+  };
+
   const socialLinks = [
     {
       name: "GitHub",
-      url: "https://github.com/yourusername",
+      url: process.env.NEXT_PUBLIC_GITHUB_URL,
       icon: (
         <svg
           className="w-6 h-6"
@@ -44,7 +69,7 @@ export default function Contact() {
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/in/yourusername",
+      url: process.env.NEXT_PUBLIC_LINKEDIN_URL,
       icon: (
         <svg
           className="w-6 h-6"
@@ -77,19 +102,37 @@ export default function Contact() {
   ];
 
   return (
-    <div className="min-h-screen py-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-20 bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-black">
+      <motion.div 
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4">Get in Touch</h1>
+        <motion.div 
+          className="text-center mb-16"
+          variants={fadeIn}
+          initial="initial"
+          animate="animate"
+        >
+          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+            Get in Touch
+          </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
             Have a question or want to work together? I'd love to hear from you.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+          <motion.div 
+            className="bg-white/80 dark:bg-gray-800/80 p-6 rounded-xl shadow-lg backdrop-blur-sm"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.2 }}
+          >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
@@ -169,31 +212,48 @@ export default function Contact() {
               </div>
               <button
                 type="submit"
+                disabled={status === 'sending'}
                 className="w-full px-6 py-3 bg-black dark:bg-white text-white dark:text-black 
                   rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 
-                  transition-colors"
+                  transition-colors disabled:opacity-50"
               >
-                Send Message
+                {status === 'sending' ? 'Sending...' : 'Send Message'}
               </button>
+              {status === 'success' && (
+                <p className="text-green-600 dark:text-green-400 text-center mt-2">
+                  Message sent successfully!
+                </p>
+              )}
+              {status === 'error' && (
+                <p className="text-red-600 dark:text-red-400 text-center mt-2">
+                  Failed to send message. Please try again.
+                </p>
+              )}
             </form>
-          </div>
+          </motion.div>
 
           {/* Contact Information */}
-          <div className="space-y-8">
+          <motion.div 
+            className="space-y-8"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.4 }}
+          >
             <div>
               <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
               <div className="space-y-4 text-gray-600 dark:text-gray-300">
                 <p>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:your.email@example.com"
-                    className="hover:underline"
+                    href="mailto:anvisrini@gmail.com"
+                    className="hover:underline text-blue-500 dark:text-blue-400"
                   >
-                    your.email@example.com
+                    anvisrini@gmail.com
                   </a>
                 </p>
                 <p>
-                  <strong>Location:</strong> San Francisco, CA
+                  <strong>Location:</strong> San Jose, CA
                 </p>
               </div>
             </div>
@@ -202,16 +262,18 @@ export default function Contact() {
               <h2 className="text-2xl font-semibold mb-4">Connect with Me</h2>
               <div className="flex space-x-4">
                 {socialLinks.map((link) => (
-                  <a
+                  <motion.a
                     key={link.name}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
+                    className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <span className="sr-only">{link.name}</span>
                     {link.icon}
-                  </a>
+                  </motion.a>
                 ))}
               </div>
             </div>
@@ -224,9 +286,9 @@ export default function Contact() {
                 9:00 AM - 5:00 PM PST
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 } 

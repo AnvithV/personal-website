@@ -12,8 +12,9 @@ export default function Home() {
               <Image
                 src="/profile.jpg"
                 alt="Anvith"
-                fill
-                className="object-cover"
+                width={128}
+                height={128}
+                className="object-cover rounded-full"
                 priority
               />
             </div>

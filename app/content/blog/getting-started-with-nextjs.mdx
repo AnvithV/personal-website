@@ -1,0 +1,57 @@
+---
+title: 'Getting Started with Next.js'
+date: '2024-03-08'
+description: 'Learn how to build modern web applications with Next.js'
+tags: ['Next.js', 'React', 'Web Development']
+---
+
+# Getting Started with Next.js
+
+Next.js has become one of the most popular frameworks for building modern web applications. In this post, I'll share my experience with Next.js and why I chose it for my personal website.
+
+## Why Next.js?
+
+Next.js offers several advantages:
+
+1. **Server-Side Rendering (SSR)**: Better SEO and initial page load performance
+2. **Static Site Generation (SSG)**: Fast page loads and reduced server costs
+3. **File-based Routing**: Intuitive and easy to understand
+4. **API Routes**: Build API endpoints right in your Next.js app
+
+## Setting Up a Next.js Project
+
+Getting started with Next.js is straightforward:
+
+```bash
+npx create-next-app@latest my-app
+cd my-app
+npm run dev
+```
+
+## Key Features
+
+### 1. File-based Routing
+
+Next.js uses the file system for routing. For example:
+- `pages/index.js` → `/`
+- `pages/about.js` → `/about`
+- `pages/blog/[slug].js` → `/blog/:slug`
+
+### 2. API Routes
+
+Create API endpoints easily:
+
+```typescript
+// pages/api/hello.ts
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.status(200).json({ message: 'Hello World!' })
+}
+```
+
+## Conclusion
+
+Next.js is an excellent choice for modern web development. It provides a great developer experience while ensuring optimal performance for users.
+
+Stay tuned for more posts about web development and technology! 
