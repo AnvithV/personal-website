@@ -13,6 +13,7 @@ export default function Navigation() {
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Photography', path: '/photography' },
     { name: 'Resume', path: '/resume' },
     { name: 'Blog', path: '/blog' },
     { name: 'Contact', path: '/contact' },
